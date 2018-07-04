@@ -73,7 +73,7 @@ const int CONNECTED_BIT = BIT0;
 static ip4_addr_t s_ip_addr;
 static camera_pixelformat_t s_pixel_format;
 
-#define CAMERA_PIXEL_FORMAT CAMERA_PF_GRAYSCALE
+#define CAMERA_OV7725_PIXEL_FORMAT CAMERA_PF_GRAYSCALE // OV2640 hard coded CAMERA_PF_JPEG
 #define CAMERA_FRAME_SIZE CAMERA_FS_SVGA
 
 
@@ -121,10 +121,10 @@ void app_main()
     }
 
     if (camera_model == CAMERA_OV7725) {
-        s_pixel_format = CAMERA_PIXEL_FORMAT;
+        s_pixel_format = CAMERA_OV7725_PIXEL_FORMAT;
         camera_config.frame_size = CAMERA_FRAME_SIZE;
         ESP_LOGI(TAG, "Detected OV7725 camera, using %s bitmap format",
-                CAMERA_PIXEL_FORMAT == CAMERA_PF_GRAYSCALE ?
+                CAMERA_OV7725_PIXEL_FORMAT == CAMERA_PF_GRAYSCALE ?
                         "grayscale" : "RGB565");
     } else if (camera_model == CAMERA_OV2640) {
         ESP_LOGI(TAG, "Detected OV2640 camera, using JPEG format");
