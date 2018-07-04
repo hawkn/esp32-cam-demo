@@ -374,6 +374,15 @@ static void wifi_init_softap()
   s_wifi_event_group = xEventGroupCreate();
 
   tcpip_adapter_init();
+
+  tcpip_adapter_dhcps_stop(TCPIP_ADAPTER_IF_AP);
+  tcpip_adapter_ip_info_t ip_info;
+  tcpip_adapter_get_ip_info(TCPIP_ADAPTER_IF_AP, &ip_info);
+  IP4_ADDR(&ip_info.gw,0,0,0,0);
+  ESP_LOGI(TAG, "Clear gateway IP address return: %d", tcpip_adapter_set_ip_info(TCPIP_ADAPTER_IF_AP, &ip_info));
+  tcpip_adapter_dhcps_start(TCPIP_ADAPTER_IF_AP);
+  s_ip_addr = ip_info.ip;
+
   ESP_ERROR_CHECK(esp_event_loop_init(event_handler, NULL));
 
   wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
@@ -392,9 +401,6 @@ static void wifi_init_softap()
   ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
   ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_AP, &wifi_config));
   ESP_ERROR_CHECK(esp_wifi_start());
-
-  uint8_t addr[4] = {192, 168, 4, 1};
-  s_ip_addr = *(ip4_addr_t*)&addr;
 
   ESP_LOGI(TAG, "wifi_init_softap finished.SSID:%s password:%s",
            EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS);
