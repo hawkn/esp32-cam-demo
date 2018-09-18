@@ -45,6 +45,10 @@
 #define EXAMPLE_ESP_WIFI_SSID CONFIG_ESP_WIFI_SSID
 #define EXAMPLE_ESP_WIFI_PASS CONFIG_ESP_WIFI_PASSWORD
 #define EXAMPLE_MAX_STA_CONN CONFIG_MAX_STA_CONN
+
+// uncomment and change to a free channel number for best performance
+// #define EXAMPLE_ESP_WIFI_CHANNEL 9
+
 #define CAMERA_LED_GPIO 16
 
 #if EXAMPLE_ESP_WIFI_MODE_AP
@@ -75,8 +79,8 @@ static ip4_addr_t s_ip_addr;
 static camera_pixelformat_t s_pixel_format;
 
 #define CAMERA_OV7725_PIXEL_FORMAT CAMERA_PF_GRAYSCALE // OV2640 hard coded CAMERA_PF_JPEG
-#define CAMERA_FRAME_SIZE CAMERA_FS_SVGA
-
+#define CAMERA_FRAME_SIZE CAMERA_FS_QVGA
+#define JPEG_QUALITY 20
 
 void app_main()
 {
@@ -131,7 +135,7 @@ void app_main()
         ESP_LOGI(TAG, "Detected OV2640 camera, using JPEG format");
         s_pixel_format = CAMERA_PF_JPEG;
         camera_config.frame_size = CAMERA_FRAME_SIZE;
-        camera_config.jpeg_quality = 15;
+        camera_config.jpeg_quality = JPEG_QUALITY;
     } else {
         ESP_LOGE(TAG, "Camera not supported");
         return;
@@ -412,6 +416,9 @@ static void wifi_init_softap()
              .ssid_len = strlen(EXAMPLE_ESP_WIFI_SSID),
              .password = EXAMPLE_ESP_WIFI_PASS,
              .max_connection = EXAMPLE_MAX_STA_CONN,
+#ifdef EXAMPLE_ESP_WIFI_CHANNEL
+             .channel = EXAMPLE_ESP_WIFI_CHANNEL,
+#endif
              .authmode = WIFI_AUTH_WPA_WPA2_PSK},
   };
   if (strlen(EXAMPLE_ESP_WIFI_PASS) == 0) {
